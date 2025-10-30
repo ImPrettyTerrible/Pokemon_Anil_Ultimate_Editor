@@ -8,7 +8,7 @@ NO RECOMENDADO SU USO CON OTROS SCRIPTS O EDITORES. (Resultados inesperados, pos
 
 Editor completo para Pokemon Añil. 
 
-Script en Ruby que inyecta un editor multifunción. Permite editar IVs, EVs, naturalezas, habilidades (incluyendo ocultas), género y ver información completa de los Pokémon del equipo. Se accede con la tecla F9.
+Script en Ruby que inyecta un editor multifunción. Permite editar IVs, EVs, naturalezas, habilidades (incluyendo ocultas), género, amistad y ver información completa de los Pokémon del equipo. Se accede con la tecla F9.
 
 Posibles futuras versiones de este script pueden incluir:
 
