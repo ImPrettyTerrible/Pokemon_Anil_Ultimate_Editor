@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# inject_editor_ULTIMATE_XX.rb
+# inject_editor_ULTIMATE.rb
 # Inyecta editor ULTIMATE multifunción
 
 # © Todos los derechos pertenecen a sus respectivos dueños. (Eric Lostie Pokémon Añil https://lostiefangames.blogspot.com/p/pokemon-anil.html)
@@ -8,7 +8,7 @@
 
 # Uso: En Windows introducir este archivo en la misma carpeta que "Game.exe" y abrir un terminal/cmd ahí mismo (click derecho en la carpeta)
 # Una vez en la terminal introducir la siguiente línea: 
-# ruby inject_editor_ULTIMATE_XX.rb (O el nombre que tenga el archivo en caso de ser distinto a este) ""Disco":\"Usuarios"\"Tu Usuario"\"Lugar de la carpeta"\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
+# ruby inject_editor_ULTIMATE.rb (O el nombre que tenga el archivo en caso de ser distinto a este) ""Disco":\"Usuarios"\"Tu Usuario"\"Lugar de la carpeta"\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
 # IMPORTANTE : Sustituir los entrecomillados por la dirección correcta según la ruta o nombres de directorios de tu dispositivo.
 # IMPORTANTE v2 : Si tras introducir el comando en terminal no aparece la verificación en terminal o algun error o pese al mensaje positivo
 # el juego no parece verse afectado por el script o el F9 (botón por defecto para abrir menú) no hace nada, cerrar el juego y repetir el comando en terminal.
@@ -586,13 +586,6 @@ scripts.each_with_index do |script, i|
   end
 end
 
-# ELIMINAR TODOS los editores anteriores
-old_editors = ["Simple Editor", "Advanced Editor", "Complete Editor", "Ultimate Editor", "IV Editor (Auto-Injected)", "Pokémon Editor (Auto-Injected)"]
-old_editors.each do |editor_name|
-  scripts.delete_if { |s| s && s[1] == editor_name }
-  puts "🗑️  Eliminado: #{editor_name}"
-end
-
 # Insertar nuevo script
 new_script = [scripts[0][0], "Ultimate Editor", compressed_code]
 scripts.insert(insert_index, new_script)
@@ -609,4 +602,5 @@ puts "   ✅ Cambio de habilidades normales y OCULTAS"
 puts "   ✅ Cambio de género"
 puts "   ✅ Info completa de Pokémon"
 puts ""
+
 puts "🎮 ACCESO: Presiona F9 en el juego para abrir el editor"
