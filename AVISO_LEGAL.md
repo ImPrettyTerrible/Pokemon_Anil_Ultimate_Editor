@@ -8,4 +8,4 @@ Puedes modificarlo o compartirlo libremente siempre que mantengas los créditos 
 
 Todos los derechos sobre el juego original pertenecen a sus respectivos creadores. (Pokémon Añil - Eric Lostie https://lostiefangames.blogspot.com/p/pokemon-anil.html)
 Pokémon y todos los nombres, personajes y materiales relacionados son propiedad de **The Pokémon Company**, **Nintendo** y **Game Freak**.  
-Este proyecto es una herramienta fanmade sin fines comerciales.
+Este proyecto es una herramienta fanmade sin fines comerciales realizado por mera diversión y difundido con el fin de ayudar a la comunidad.
