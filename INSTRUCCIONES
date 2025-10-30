@@ -1,0 +1,70 @@
+
+Este script ha sido diseñado para inyectar el Ultimate Editor en el juego fanmade Pokémon Anil V3.52 creado con RPG Maker y Pokémon Essentials. (Asumo, en cualquier caso, es posible que de haber futuras actualizaciones, el script funcione correctamente)
+Permite editar IVs, EVs, naturaleza, habilidades, género y ver información completa de tus Pokémon directamente desde el juego y realizar las modificaciones en tiempo real mientras juegas.
+
+------------------------------------------------------------------------------------------------------------------
+
+REQUISITOS
+
+Sistema operativo Windows. (Script pensado para ser ejecutado desde Windows)
+
+Tener instalado Ruby (recomendado: versión 2.7 o superior). (Es un script de Ruby al fin y al cabo, dejo aquí el link oficial https://rubyinstaller.org/ el más comodo para Windows, solo hay que darle al gran botón rojo de descarga)
+
+Contar con el juego Pokémon Anil V3.52 con su archivo Game.exe. (Game.exe es el ejecutable para poder abrir el juego, entre otros muchos archivos relevantes que espero que nadie modifique de otra manera porque entonces dudo del funcionamiento del juego y de mi modificador)
+
+------------------------------------------------------------------------------------------------------------------
+
+PASOS DE INSTALACIÓN
+
+Copia el archivo del script (inject_ultimate_editor_fixed_abilities.rb) en la misma carpeta donde se encuentra Game.exe.
+
+Abre un terminal o CMD en esa carpeta:
+
+Haz clic derecho dentro de la carpeta → “Abrir ventana de PowerShell aquí” o “Abrir ventana de CMD aquí”.
+
+Ejecuta el script con Ruby usando el siguiente comando (ajustando la ruta de tu archivo Scripts.rxdata):
+
+ruby inject_ultimate_editor_fixed_abilities.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
+
+Importante: Sustituye <TuUsuario> y la ruta según corresponda en tu dispositivo.
+Asegúrate de usar comillas si hay espacios en la ruta.
+
+------------------------------------------------------------------------------------------------------------------
+
+VERIFICACIÓN
+
+El script crea automáticamente un backup del archivo Scripts.rxdata llamado Scripts.rxdata.backup.
+
+Para saber si la inyección fue exitosa:
+
+Abre el juego normalmente.
+
+Si el juego tarda unos segundos más en iniciar y aparece un cuadro de texto indicando que el servicio se está inicializando, el script fue cargado correctamente.
+
+Presiona F9 dentro del juego para abrir el Ultimate Editor. (F9 es el botón por defecto, el más mañoso puede cambiarlo a voluntad, si es motivo de preocupación puedo indicar como cambiarlo)
+
+------------------------------------------------------------------------------------------------------------------
+
+PROBLEMAS COMUNES
+
+Si el F9 no funciona o el menú no aparece:
+
+Cierra el juego.
+
+Repite la ejecución del script desde el terminal.
+
+Asegúrate de que la ruta de Scripts.rxdata sea correcta.
+
+Si aparece un error en el terminal: revisa que Ruby esté correctamente instalado y que estés usando la ruta completa al archivo Scripts.rxdata.
+
+------------------------------------------------------------------------------------------------------------------
+
+NOTAS ADICIONALES
+
+Este script modifica directamente los datos internos del juego.
+
+Se recomienda no usarlo con fines comerciales.
+
+Se permite su uso solo para fines educativos o de modificación personal.
+
+Es solo una herramienta creada por diversión para la comunidad, usenla bajo su propio riesgo.
