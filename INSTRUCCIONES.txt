@@ -6,17 +6,17 @@ Permite editar IVs, EVs, naturaleza, habilidades, género y ver información com
 
 REQUISITOS
 
-Sistema operativo Windows. (Script pensado para ser ejecutado desde Windows)
+Sistema operativo Windows. (Script pensado para ser ejecutado desde Windows).
 
-Tener instalado Ruby (recomendado: versión 2.7 o superior). (Es un script de Ruby al fin y al cabo, dejo aquí el link oficial https://rubyinstaller.org/ el más comodo para Windows, solo hay que darle al gran botón rojo de descarga)
+Tener instalado Ruby (recomendado: versión 2.7 o superior). (Es un script de Ruby al fin y al cabo, dejo aquí el link oficial https://rubyinstaller.org/ el más comodo para Windows, solo hay que darle al gran botón rojo de descarga). El lugar de instalación de ruby en tu dispositivo es irrelevante, mientras instales ruby en la ruta predefinida del instalador todo correcto.
 
-Contar con el juego Pokémon Anil V3.52 con su archivo Game.exe. (Game.exe es el ejecutable para poder abrir el juego, entre otros muchos archivos relevantes que espero que nadie modifique de otra manera porque entonces dudo del funcionamiento del juego y de mi modificador)
+Contar con el juego Pokémon Anil V3.52 con su archivo Game.exe. (Game.exe es el ejecutable para poder abrir el juego, entre otros muchos archivos relevantes que espero que nadie modifique de otra manera porque entonces dudo del funcionamiento del juego y de mi modificador).
 
 ------------------------------------------------------------------------------------------------------------------
 
 PASOS DE INSTALACIÓN
 
-Copia el archivo del script (inject_ultimate_editor_fixed_abilities.rb) en la misma carpeta donde se encuentra Game.exe.
+Copia el archivo del script (inject_editor_ULTIMATE.rb) en la misma carpeta donde se encuentra Game.exe.
 
 Abre un terminal o CMD en esa carpeta:
 
@@ -27,13 +27,13 @@ Ejecuta el script con Ruby usando el siguiente comando (ajustando la ruta de tu 
 ruby inject_ultimate_editor_fixed_abilities.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
 
 Importante: Sustituye <TuUsuario> y la ruta según corresponda en tu dispositivo.
-Asegúrate de usar comillas si hay espacios en la ruta.
+Asegúrate de usar comillas en la ruta y sobretodo de que el script se aplique sobre Data/Scripts.rxdata, pues el objetivo que mi script busca para modificar y esa su ubicación por defecto.
 
 ------------------------------------------------------------------------------------------------------------------
 
 VERIFICACIÓN
 
-El script crea automáticamente un backup del archivo Scripts.rxdata llamado Scripts.rxdata.backup.
+El script crea automáticamente un backup del archivo Scripts.rxdata llamado Scripts.rxdata.backup, igualmente recominedo realizar una copia manual antes de ejecutar el comando en terminal por si acaso.
 
 Para saber si la inyección fue exitosa:
 
@@ -41,21 +41,21 @@ Abre el juego normalmente.
 
 Si el juego tarda unos segundos más en iniciar y aparece un cuadro de texto indicando que el servicio se está inicializando, el script fue cargado correctamente.
 
-Presiona F9 dentro del juego para abrir el Ultimate Editor. (F9 es el botón por defecto, el más mañoso puede cambiarlo a voluntad, si es motivo de preocupación puedo indicar como cambiarlo)
+Presiona F9 dentro del juego para abrir el Ultimate Editor. (F9 es el botón por defecto, el más mañoso puede cambiarlo a voluntad, si es motivo de preocupación puedo indicar como cambiarlo).
 
 ------------------------------------------------------------------------------------------------------------------
 
 PROBLEMAS COMUNES
 
-Si el F9 no funciona o el menú no aparece:
+Si los mensajes al abrir el juego no aparecen o el F9 no funciona / menú no abre:
 
 Cierra el juego.
 
-Repite la ejecución del script desde el terminal.
+Repite la ejecución del script desde el terminal. (Pueba a cerrar el terminal y abrir uno nuevo y entonces ahí repetir el comando).
 
-Asegúrate de que la ruta de Scripts.rxdata sea correcta.
+Asegúrate de que la ruta de Scripts.rxdata sea correcta. (Pues precisamente este es archivo que se precisa modificar para que la injección funcione).
 
-Si aparece un error en el terminal: revisa que Ruby esté correctamente instalado y que estés usando la ruta completa al archivo Scripts.rxdata.
+Si aparece un error en el terminal: revisa que Ruby esté correctamente instalado y que estés usando la ruta completa al archivo Scripts.rxdata, si todo esto es correcto, de nuevo, repite el comando en terminal nuevo.
 
 ------------------------------------------------------------------------------------------------------------------
 
