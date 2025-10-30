@@ -16,7 +16,7 @@ Posibles futuras versiones de este script pueden incluir:
 
 -Adición de Pokémon a mano al equipo. (Una opción para añadir al equipo un Pokémon a elección).
 
--Elección del nivel de amistad para cada Pokémon.
++Elección del nivel de amistad para cada Pokémon. [YA REALIZADO] Incluye 3 opciones rápidas de amistad,a 0, a 220 y a 255, ademñas del selector manual de cantidad.
 
 -Modificación de experiencia, tanto en puntos como en nivel. (Poco relevane pues el juego ofrece caramelos raros infinitos).
 
