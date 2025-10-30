@@ -4,6 +4,8 @@ SE PRECISA DE RUBY (https://rubyinstaller.org/).
 
 LEER ARCHIVO DE TEXTO "INSTRUCCIONES" PARA MÁS INFORMACIÓN.
 
+NO RECOMENDADO SU USO CON OTROS SCRIPTS O EDITORES. (Resultados inesperados, posible corrupción de archivos).
+
 Editor completo para Pokemon Añil. 
 
 Script en Ruby que inyecta un editor multifunción. Permite editar IVs, EVs, naturalezas, habilidades (incluyendo ocultas), género y ver información completa de los Pokémon del equipo. Se accede con la tecla F9.
