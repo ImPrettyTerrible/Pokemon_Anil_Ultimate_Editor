@@ -1,6 +1,6 @@
 
 Este script ha sido diseñado para inyectar el Ultimate Editor en el juego fanmade Pokémon Anil V3.52 creado con RPG Maker y Pokémon Essentials. (Asumo, en cualquier caso, es posible que de haber futuras actualizaciones, el script funcione correctamente)
-Permite editar IVs, EVs, naturaleza, habilidades, género y ver información completa de tus Pokémon directamente desde el juego y realizar las modificaciones en tiempo real mientras juegas.
+Permite editar IVs, EVs, naturaleza, habilidades, género, amistad y ver información completa de tus Pokémon directamente desde el juego y realizar las modificaciones en tiempo real mientras juegas.
 
 ------------------------------------------------------------------------------------------------------------------
 
@@ -20,13 +20,15 @@ PASOS DE INSTALACIÓN
 
 Copia el archivo del script (inject_editor_ULTIMATE.rb) en la misma carpeta donde se encuentra Game.exe.
 
-Abre un terminal o CMD en esa carpeta:
+Abre un terminal o CMD en esa carpeta, para ello:
 
-Haz clic derecho dentro de la carpeta → “Abrir ventana de PowerShell aquí” o “Abrir ventana de CMD aquí”.
+Haz clic derecho dentro de la carpeta → “Abrir ventana de PowerShell aquí” o “Abrir ventana de CMD aquí” / "Abrir en Terminal".
 
 Ejecuta el script con Ruby usando el siguiente comando (ajustando la ruta de tu archivo Scripts.rxdata):
 
-ruby inject_ultimate_editor_fixed_abilities.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
+ruby inject_ultimate_editor_fixed_abilities.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata" 
+
+Pulse "ENTER". Tras esto deberia aparecer algún tipo de mensaje en la terminal.
 
 Importante: Sustituye <TuUsuario> y la ruta según corresponda en tu dispositivo.
 Asegúrate de usar comillas en la ruta y sobretodo de que el script se aplique sobre Data/Scripts.rxdata, pues el objetivo que mi script busca para modificar y esa su ubicación por defecto.
@@ -49,7 +51,7 @@ Presiona F9 dentro del juego para abrir el Ultimate Editor. (F9 es el botón por
 
 PROBLEMAS COMUNES
 
-Si los mensajes al abrir el juego no aparecen o el F9 no funciona / menú no abre:
+Si los mensajes al abrir el juego no aparecen o el F9 no funciona / menú no abre entonces:
 
 Cierra el juego.
 
@@ -58,6 +60,13 @@ Repite la ejecución del script desde el terminal. (Pueba a cerrar el terminal y
 Asegúrate de que la ruta de Scripts.rxdata sea correcta. (Pues precisamente este es archivo que se precisa modificar para que la injección funcione).
 
 Si aparece un error en el terminal: revisa que Ruby esté correctamente instalado y que estés usando la ruta completa al archivo Scripts.rxdata, si todo esto es correcto, de nuevo, repite el comando en terminal nuevo.
+
+| IMPORTANTE |
+
+Tras abrir terminal e introducir el comando (visto previamente) recomiendo no cerrar dicha terminal y así en caso de que al abrir el juego este no muestre mensajes como: "Editor Ultimate cargando..."
+Cierre el juego y repita el comando anterior en la misma terminal (tocando la flecha de dirección "ARRIBA"  del teclado y una vez vea el comando darle "ENTER", haga esto una única vez y no vuelva a realizar esta operación).
+
+SOLO REPITA ESTO EN CASO DE QUE EL EDITOR NO PAREZCA FUNCIONAR
 
 ------------------------------------------------------------------------------------------------------------------
 
