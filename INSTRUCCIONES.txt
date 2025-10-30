@@ -16,6 +16,8 @@ Contar con el juego Pokémon Anil V3.52 con su archivo Game.exe. (Game.exe es el
 
 PASOS DE INSTALACIÓN
 
+(RECOMIENDO INSPECCIONAR EL ARCHIVO PRIMERO. Abrir con Bloc de Notas o similar y echarle un vistazo, en la cabecera, las priemras líneas, hay información e instrucciones en caso de que se prefiera verlas ahí)
+
 Copia el archivo del script (inject_editor_ULTIMATE.rb) en la misma carpeta donde se encuentra Game.exe.
 
 Abre un terminal o CMD en esa carpeta:
