@@ -26,7 +26,7 @@ Haz clic derecho dentro de la carpeta → “Abrir ventana de PowerShell aquí�
 
 Ejecuta el script con Ruby usando el siguiente comando (ajustando la ruta de tu archivo Scripts.rxdata):
 
-ruby inject_ultimate_editor_fixed_abilities.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata" 
+ruby inject_editor_ULTIMATE.rb "C:\Usuarios\<TuUsuario>\Documentos\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata" 
 
 Pulse "ENTER". Tras esto deberia aparecer algún tipo de mensaje en la terminal.
 
