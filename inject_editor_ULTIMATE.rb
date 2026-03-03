@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# inject_editor_ULTIMATE_XX.rb
+# inject_editor_ULTIMATE.rb
 # Inyecta editor ULTIMATE multifunción
 
 # © Todos los derechos pertenecen a sus respectivos dueños. (Eric Lostie Pokémon Añil https://lostiefangames.blogspot.com/p/pokemon-anil.html)
@@ -8,7 +8,7 @@
 
 # Uso: En Windows introducir este archivo en la misma carpeta que "Game.exe" y abrir un terminal/cmd ahí mismo (click derecho en la carpeta)
 # Una vez en la terminal introducir la siguiente línea: 
-# ruby inject_editor_ULTIMATE_XX.rb (O el nombre que tenga el archivo en caso de ser distinto a este) ""Disco":\"Usuarios"\"Tu Usuario"\"Lugar de la carpeta"\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
+# ruby inject_editor_ULTIMATE.rb (O el nombre que tenga el archivo en caso de ser distinto a este) ""Disco":\"Usuarios"\"Tu Usuario"\"Lugar de la carpeta"\ANIL V3.52\Pokemon Anil V3.52\Data\Scripts.rxdata"
 # IMPORTANTE : Sustituir los entrecomillados por la dirección correcta según la ruta o nombres de directorios de tu dispositivo.
 # IMPORTANTE v2 : Si tras introducir el comando en terminal no aparece la verificación en terminal o algun error o pese al mensaje positivo
 # el juego no parece verse afectado por el script o el F9 (botón por defecto para abrir menú) no hace nada, cerrar el juego y repetir el comando en terminal.
@@ -23,10 +23,10 @@ if ARGV.empty?
   puts "=" * 70
   puts ""
   puts "Uso:"
-  puts '  ruby inject_editor_ULTIMATE_FIXED.rb "ruta\\a\\Data\\Scripts.rxdata"'
+  puts '  ruby inject_editor_ULTIMATE.rb "ruta\\a\\Data\\Scripts.rxdata"'
   puts ""
   puts "Ejemplo:"
-  puts '  ruby inject_editor_ULTIMATE_FIXED.rb "C:\\Juego\\Data\\Scripts.rxdata"'
+  puts '  ruby inject_editor_ULTIMATE.rb "C:\\Juego\\Data\\Scripts.rxdata"'
   puts ""
   exit 0
 end
@@ -605,20 +605,363 @@ def pbShowPokemonInfo(pkmn)
   
   Kernel.pbMessage(info) rescue nil
 end
+# ─────────────────────────────────────────────────────────────────────────────
+# CREAR POKÉMON — flujo guiado completo
+# ─────────────────────────────────────────────────────────────────────────────
+
+def pbSpeciesName(id)
+  PBSpecies.getName(id) rescue "Pokémon ##{id}"
+end
+
+def pbMaxSpecies
+  max = 0
+  begin
+    max = PBSpecies.maxValue
+  rescue
+    begin
+      i = 1
+      loop do
+        name = PBSpecies.getName(i) rescue nil
+        break if name.nil? || name.empty?
+        max = i
+        i += 1
+        break if i > 2000
+      end
+    rescue
+      max = 386
+    end
+  end
+  max = 386 if max == 0
+  return max
+end
+
+def pbValidSpecies?(id)
+  return false if id <= 0
+  name = PBSpecies.getName(id) rescue nil
+  return false if name.nil? || name.empty?
+  return true
+end
+
+def pbSelectSpeciesByNumber
+  max = pbMaxSpecies
+  params = ChooseNumberParams.new
+  params.setRange(1, max)
+  params.setDefaultValue(1)
+  params.setCancelValue(-1)
+  id = Kernel.pbMessageChooseNumber(
+    "Introduce el número de Pokédex (1-#{max}):", params
+  ) rescue -1
+  return nil if id < 1
+  unless pbValidSpecies?(id)
+    Kernel.pbMessage("No existe ningún Pokémon con ese número.") rescue nil
+    return nil
+  end
+  return id
+end
+
+def pbSelectSpeciesByList
+  max  = pbMaxSpecies
+  page = 0
+  per  = 10
+
+  loop do
+    start_i = page * per + 1
+    end_i   = [start_i + per - 1, max].min
+
+    commands = []
+    ids      = []
+    (start_i..end_i).each do |i|
+      name = pbSpeciesName(i)
+      commands.push("##{i} #{name}")
+      ids.push(i)
+    end
+
+    commands.push("« Anterior") if page > 0
+    commands.push("Siguiente »") if end_i < max
+    commands.push("Cancelar")
+
+    cmd = Kernel.pbShowCommands(nil, commands, -1) rescue (commands.length - 1)
+    return nil if cmd.nil? || cmd < 0
+
+    label = commands[cmd]
+
+    if label == "Cancelar"
+      return nil
+    elsif label == "Siguiente »"
+      page += 1
+    elsif label == "« Anterior"
+      page -= 1
+    else
+      return ids[cmd]
+    end
+  end
+end
+
+def pbSelectSpecies
+  methods = ["Introducir número de Pokédex", "Buscar en lista", "Cancelar"]
+  cmd = Kernel.pbShowCommands(nil, methods, -1) rescue 2
+  return nil if cmd.nil? || cmd == 2
+  case cmd
+  when 0 then return pbSelectSpeciesByNumber
+  when 1 then return pbSelectSpeciesByList
+  end
+  return nil
+end
+
+def pbChooseLevel
+  params = ChooseNumberParams.new
+  params.setRange(1, 100)
+  params.setDefaultValue(50)
+  params.setCancelValue(-1)
+  lv = Kernel.pbMessageChooseNumber("Nivel del Pokémon (1-100):", params) rescue -1
+  return lv >= 1 ? lv : nil
+end
+
+def pbChooseNatureForNew
+  natures = [
+    "Adamant (+Atk -SpA)",  "Modest (+SpA -Atk)",
+    "Jolly (+Spe -SpA)",    "Timid (+Spe -Atk)",
+    "Bold (+Def -Atk)",     "Impish (+Def -SpA)",
+    "Calm (+SpD -Atk)",     "Careful (+SpD -SpA)",
+    "Brave (+Atk -Spe)",    "Quiet (+SpA -Spe)",
+    "Relaxed (+Def -Spe)",  "Sassy (+SpD -Spe)",
+    "Lonely (+Atk -Def)",   "Mild (+SpA -Def)",
+    "Rash (+SpA -SpD)",     "Gentle (+SpD -Def)",
+    "Hasty (+Spe -Def)",    "Naive (+Spe -SpD)",
+    "Naughty (+Atk -SpD)",  "Lax (+Def -SpD)",
+    "Serious (Neutral)",    "Cancelar"
+  ]
+  nature_ids = [3,15,13,10,5,8,20,23,2,17,7,22,1,16,19,21,11,14,4,9,0]
+
+  cmd = Kernel.pbShowCommands(nil, natures, -1) rescue 21
+  return nil if cmd.nil? || cmd == 21
+  return nature_ids[cmd]
+end
+
+def pbChooseIVsForNew
+  stats = ["HP","Ataque","Defensa","Velocidad","Ataque Especial","Defensa Especial"]
+  ivs   = [31,31,31,31,31,31]
+
+  loop do
+    commands = []
+    stats.each_with_index { |s,i| commands.push("#{s}: #{ivs[i]}") }
+    commands.push("Confirmar (IVs actuales)", "Todos perfectos (31)")
+
+    cmd = Kernel.pbShowCommands(nil, commands, -1) rescue 7
+    break if cmd.nil?
+
+    if cmd < 6
+      params = ChooseNumberParams.new
+      params.setRange(0, 31)
+      params.setDefaultValue(ivs[cmd])
+      params.setCancelValue(-1)
+      val = Kernel.pbMessageChooseNumber("IV de #{stats[cmd]} (0-31):", params) rescue -1
+      ivs[cmd] = val if val >= 0
+    elsif cmd == 6
+      break
+    elsif cmd == 7
+      ivs = [31,31,31,31,31,31]
+    end
+  end
+
+  return ivs
+end
+
+def pbChooseAbilityForNew(species, level)
+  temp = PokeBattle_Pokemon.new(species, level) rescue nil
+  return nil unless temp
+
+  abilities = temp.getAbilityList rescue []
+  return nil if abilities.nil? || abilities.empty?
+
+  commands    = []
+  ability_ids = []
+  abilities.each do |adata|
+    aid    = adata[0]
+    aname  = PBAbilities.getName(aid) rescue "Habilidad #{aid}"
+    hidden = (adata[1] == 2)
+    commands.push(hidden ? "#{aname} (Oculta)" : aname)
+    ability_ids.push(aid)
+  end
+  commands.push("Cancelar")
+
+  cmd = Kernel.pbShowCommands(nil, commands, -1) rescue (commands.length - 1)
+  return nil if cmd.nil? || cmd < 0 || cmd >= ability_ids.length
+  return [ability_ids[cmd], abilities[cmd] ? abilities[cmd][1] : 0]
+end
+
+def pbChooseGenderForNew(species, level)
+  temp = PokeBattle_Pokemon.new(species, level) rescue nil
+
+  if temp
+    genderrate = temp.genderRate rescue -1
+    return 2 if genderrate == 255
+    return 0 if genderrate == 0
+    return 1 if genderrate == 254
+  end
+
+  commands = ["Macho","Hembra","Sin género","Cancelar"]
+  cmd = Kernel.pbShowCommands(nil, commands, -1) rescue 3
+  return nil if cmd.nil? || cmd == 3
+  return cmd
+end
+
+def pbChoosePokeball
+  ball_names = [
+    "Poké Ball",   "Super Ball",   "Ultra Ball",   "Master Ball",
+    "Safari Ball", "Net Ball",     "Dive Ball",    "Nest Ball",
+    "Repeat Ball", "Timer Ball",   "Luxury Ball",  "Premier Ball",
+    "Dusk Ball",   "Heal Ball",    "Quick Ball",   "Cherish Ball",
+    "Cancelar"
+  ]
+  ball_ids = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+
+  cmd = Kernel.pbShowCommands(nil, ball_names, -1) rescue 16
+  return nil if cmd.nil? || cmd == 16
+  return ball_ids[cmd]
+end
+
+def pbCreatePokemon
+  p "Abriendo asistente de creación de Pokémon"
+
+  Kernel.pbMessage("── Paso 1/7: Especie ──\nElige el Pokémon que quieres crear.") rescue nil
+  species = pbSelectSpecies
+  return if species.nil?
+  species_name = pbSpeciesName(species)
+
+  Kernel.pbMessage("── Paso 2/7: Nivel ──\nElige el nivel de #{species_name}.") rescue nil
+  level = pbChooseLevel
+  return if level.nil?
+
+  Kernel.pbMessage("── Paso 3/7: Naturaleza ──\nElige la naturaleza de #{species_name}.") rescue nil
+  nature_id = pbChooseNatureForNew
+  return if nature_id.nil?
+
+  Kernel.pbMessage("── Paso 4/7: IVs ──\nPor defecto están a 31. Puedes ajustar stat a stat.") rescue nil
+  ivs = pbChooseIVsForNew
+  return if ivs.nil?
+
+  Kernel.pbMessage("── Paso 5/7: Habilidad ──\nElige la habilidad de #{species_name}.") rescue nil
+  ability_data     = pbChooseAbilityForNew(species, level)
+  chosen_ability   = ability_data ? ability_data[0] : nil
+  chosen_abilityfl = ability_data ? ability_data[1] : 0
+
+  Kernel.pbMessage("── Paso 6/7: Género ──\nElige el género de #{species_name}.") rescue nil
+  gender = pbChooseGenderForNew(species, level)
+  return if gender.nil?
+
+  Kernel.pbMessage("── Paso 7/7: Poké Ball ──\nElige la Poké Ball. Si cancelas se usará una Poké Ball normal.") rescue nil
+  ball_id = pbChoosePokeball
+  ball_id = 1 if ball_id.nil?
+
+  nature_names = ["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed",
+                  "Impish","Lax","Timid","Hasty","Serious","Jolly","Naive","Modest",
+                  "Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky"]
+  nature_str  = nature_names[nature_id] rescue "Naturaleza #{nature_id}"
+  gender_str  = ["Macho","Hembra","Sin género"][gender] rescue "?"
+  ability_str = chosen_ability ? (PBAbilities.getName(chosen_ability) rescue "Habilidad #{chosen_ability}") : "Default"
+  iv_str      = "HP#{ivs[0]} Atk#{ivs[1]} Def#{ivs[2]} Spe#{ivs[3]} SpA#{ivs[4]} SpD#{ivs[5]}"
+
+  summary  = "Resumen:\n#{species_name} Nv.#{level}\n"
+  summary += "Naturaleza: #{nature_str} | Género: #{gender_str}\n"
+  summary += "Habilidad: #{ability_str}\nIVs: #{iv_str}"
+
+  confirm = Kernel.pbShowCommands(nil, ["✅ Confirmar y crear", "❌ Cancelar"], -1) rescue 1
+  return if confirm.nil? || confirm == 1
+
+  begin
+    new_pkmn = PokeBattle_Pokemon.new(species, level)
+
+    if new_pkmn.respond_to?(:setNature)
+      new_pkmn.setNature(nature_id)
+    else
+      new_pkmn.nature = nature_id rescue nil
+    end
+
+    6.times { |i| new_pkmn.iv[i] = ivs[i] }
+
+    if chosen_ability
+      new_pkmn.setAbility(chosen_ability) rescue nil
+      if new_pkmn.instance_variable_defined?(:@ability)
+        new_pkmn.instance_variable_set(:@ability, chosen_ability) rescue nil
+      end
+      if chosen_abilityfl == 2
+        if new_pkmn.respond_to?(:abilityflag=)
+          new_pkmn.abilityflag = 2 rescue nil
+        elsif new_pkmn.instance_variable_defined?(:@abilityflag)
+          new_pkmn.instance_variable_set(:@abilityflag, 2) rescue nil
+        end
+      end
+    end
+
+    if new_pkmn.respond_to?(:setGender)
+      new_pkmn.setGender(gender) rescue nil
+    else
+      new_pkmn.gender = gender rescue nil
+    end
+
+    if new_pkmn.respond_to?(:ballused=)
+      new_pkmn.ballused = ball_id rescue nil
+    elsif new_pkmn.instance_variable_defined?(:@ballused)
+      new_pkmn.instance_variable_set(:@ballused, ball_id) rescue nil
+    end
+
+    new_pkmn.calcStats rescue nil
+
+    party_full = ($Trainer.party.length >= 6)
+
+    if !party_full
+      $Trainer.party.push(new_pkmn)
+      p "✅ #{species_name} añadido al party"
+      Kernel.pbMessage("¡#{species_name} añadido a tu equipo!\n#{summary}") rescue nil
+    else
+      stored = false
+
+      if defined?(pbStorePokemon) && !stored
+        begin
+          pbStorePokemon(new_pkmn)
+          stored = true
+        rescue => e
+          p "pbStorePokemon falló: #{e.message}"
+        end
+      end
+
+      if !stored && defined?($PokemonStorage) && $PokemonStorage
+        begin
+          box, slot = $PokemonStorage.pbStoreCaught(new_pkmn)
+          stored = (box && slot)
+        rescue => e
+          p "PokemonStorage falló: #{e.message}"
+        end
+      end
+
+      if stored
+        Kernel.pbMessage("Tu equipo está completo.\n#{species_name} ha sido enviado al PC.") rescue nil
+      else
+        Kernel.pbMessage("❌ No se pudo añadir al PC.\nAsegúrate de tener espacio en el almacén.") rescue nil
+      end
+    end
+
+  rescue => e
+    p "❌ Error creando Pokémon: #{e.message}"
+    Kernel.pbMessage("Error al crear el Pokémon:\n#{e.message}") rescue nil
+  end
+end
 
 def pbUltimateEditor
-  if !pbEditorSafeCheck
-    p "❌ Editor: Verificación de seguridad fallida"
-    Kernel.pbMessage("No se puede abrir el editor:\n• Partida no iniciada\n• Party vacío\n• Datos corruptos") rescue nil
+  if !$Trainer
+    p "❌ Editor: No hay datos de entrenador"
+    Kernel.pbMessage("No se puede abrir el editor:\n• Partida no iniciada") rescue nil
     return
   end
   
   p "Editor Ultimate abierto"
   
-  loop do
+ loop do
     commands = [
+      "★ Crear Pokémon nuevo",
       "Editar IVs manualmente",
-      "Editar EVs manualmente", 
+      "Editar EVs manualmente",
       "Cambiar Naturaleza",
       "Cambiar Habilidad",
       "Cambiar Género",
@@ -629,37 +972,39 @@ def pbUltimateEditor
       "Ver EVs del party",
       "Cancelar"
     ]
-    
-    cmd = Kernel.pbShowCommands(nil, commands, -1) rescue 10
-    break if cmd == 10 || cmd.nil?
-    
+
+    cmd = Kernel.pbShowCommands(nil, commands, -1) rescue 11
+    break if cmd == 11 || cmd.nil?
+
     case cmd
     when 0
-      slot = pbSelectPokemon
-      pbEditIVsManual($Trainer.party[slot]) if slot
+      pbCreatePokemon
     when 1
       slot = pbSelectPokemon
-      pbEditEVsManual($Trainer.party[slot]) if slot
+      pbEditIVsManual($Trainer.party[slot]) if slot
     when 2
       slot = pbSelectPokemon
-      pbEditNature($Trainer.party[slot]) if slot
+      pbEditEVsManual($Trainer.party[slot]) if slot
     when 3
       slot = pbSelectPokemon
-      pbEditAbility($Trainer.party[slot]) if slot
+      pbEditNature($Trainer.party[slot]) if slot
     when 4
       slot = pbSelectPokemon
-      pbEditGender($Trainer.party[slot]) if slot
+      pbEditAbility($Trainer.party[slot]) if slot
     when 5
       slot = pbSelectPokemon
-      pbEditHappiness($Trainer.party[slot]) if slot
+      pbEditGender($Trainer.party[slot]) if slot
     when 6
       slot = pbSelectPokemon
-      pbShowPokemonInfo($Trainer.party[slot]) if slot
+      pbEditHappiness($Trainer.party[slot]) if slot
     when 7
-      pbPerfectIVs
+      slot = pbSelectPokemon
+      pbShowPokemonInfo($Trainer.party[slot]) if slot
     when 8
-      pbShowIVs
+      pbPerfectIVs
     when 9
+      pbShowIVs
+    when 10
       pbShowEVs
     end
   end
@@ -671,12 +1016,12 @@ if defined?(Scene_Map)
     def update
       ultimate_editor_update
       if Input.trigger?(Input::F9)
-        if $Trainer && $Trainer.party && !$Trainer.party.empty?
+        if $Trainer
           p "F9 presionado - Abriendo editor ULTIMATE"
           pbUltimateEditor
         else
-          p "F9 presionado - No se puede abrir editor (partida no lista)"
-          Kernel.pbMessage("Espera a tener Pokémon en tu equipo para usar el editor.") rescue nil
+          p "F9 presionado - No se puede abrir editor (partida no iniciada)"
+          Kernel.pbMessage("Inicia una partida antes de usar el editor.") rescue nil
         end
       end
     end
@@ -700,24 +1045,31 @@ scripts.each_with_index do |script, i|
   end
 end
 
-# Eliminar editores anteriores SILENCIOSAMENTE para evitar duplicados
-old_editors = [
-  "Simple Editor", 
-  "Advanced Editor", 
-  "Complete Editor", 
-  "Ultimate Editor", 
-  "IV Editor (Auto-Injected)", 
-  "Pokémon Editor (Auto-Injected)"
+# Eliminar editores anteriores por contenido, no por nombre
+EDITOR_SIGNATURES = [
+  "pbUltimateEditor",
+  "pbEditorSafeCheck",
+  "pbEditIVsManual",
+  "pbCreatePokemon"
 ]
 
 deleted_count = 0
-old_editors.each do |editor_name|
-  before_size = scripts.size
-  scripts.delete_if { |s| s && s[1] == editor_name }
-  deleted_count += (before_size - scripts.size)
+scripts.delete_if do |s|
+  next false if !s || !s[2] || s[2].empty?
+  begin
+    decompressed = Zlib::Inflate.inflate(s[2])
+    is_editor = EDITOR_SIGNATURES.any? { |sig| decompressed.include?(sig) }
+    if is_editor
+      deleted_count += 1
+      true
+    else
+      false
+    end
+  rescue
+    false  # Si no se puede descomprimir, no tocar
+  end
 end
 
-# Solo mostrar mensaje si realmente se eliminó algo
 if deleted_count > 0
   puts "🔄 Editores anteriores eliminados: #{deleted_count}"
 end
