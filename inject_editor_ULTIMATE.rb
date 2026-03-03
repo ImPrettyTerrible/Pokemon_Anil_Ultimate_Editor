@@ -53,7 +53,7 @@ end
 
 # Cargar scripts
 puts "⚙️  Cargando scripts del juego..."
-scripts = Marshal.load(File.binread(scripts_path))
+scripts = Marshal.load(File.binread(backup_path))
 puts "✅ #{scripts.length} scripts cargados"
 
 # Código ULTIMATE Editor
@@ -821,7 +821,7 @@ def pbChoosePokeball
   return ball_ids[cmd]
 end
 
-def pbCreatePokemon
+def pbUltimateCreatePokemon
   p "Abriendo asistente de creación de Pokémon"
 
   Kernel.pbMessage("── Paso 1/7: Especie ──\nElige el Pokémon que quieres crear.") rescue nil
@@ -949,9 +949,9 @@ def pbCreatePokemon
 end
 
 def pbUltimateEditor
-  if !$Trainer
-    p "❌ Editor: No hay datos de entrenador"
-    Kernel.pbMessage("No se puede abrir el editor:\n• Partida no iniciada") rescue nil
+  if !pbEditorSafeCheck
+    p "❌ Editor: Verificación de seguridad fallida"
+    Kernel.pbMessage("No se puede abrir el editor:\n• Partida no iniciada\n• Party vacío\n• Datos corruptos") rescue nil
     return
   end
   
@@ -959,7 +959,7 @@ def pbUltimateEditor
   
  loop do
     commands = [
-      "★ Crear Pokémon nuevo",
+      "Crear Pokémon nuevo",
       "Editar IVs manualmente",
       "Editar EVs manualmente",
       "Cambiar Naturaleza",
@@ -978,7 +978,7 @@ def pbUltimateEditor
 
     case cmd
     when 0
-      pbCreatePokemon
+      pbUltimateCreatePokemon
     when 1
       slot = pbSelectPokemon
       pbEditIVsManual($Trainer.party[slot]) if slot
@@ -1045,33 +1045,17 @@ scripts.each_with_index do |script, i|
   end
 end
 
-# Eliminar editores anteriores por contenido, no por nombre
-EDITOR_SIGNATURES = [
-  "pbUltimateEditor",
-  "pbEditorSafeCheck",
-  "pbEditIVsManual",
-  "pbCreatePokemon"
-]
+# Eliminar version anterior del editor (solo por nombre exacto, nunca toca scripts del juego)
+scripts.delete_if { |s| s && s[1] == "Ultimate Editor" }
 
-deleted_count = 0
-scripts.delete_if do |s|
-  next false if !s || !s[2] || s[2].empty?
-  begin
-    decompressed = Zlib::Inflate.inflate(s[2])
-    is_editor = EDITOR_SIGNATURES.any? { |sig| decompressed.include?(sig) }
-    if is_editor
-      deleted_count += 1
-      true
-    else
-      false
-    end
-  rescue
-    false  # Si no se puede descomprimir, no tocar
+# Recalcular insert_index tras la limpieza
+insert_index = scripts.length - 1
+scripts.each_with_index do |script, i|
+  next if !script || !script[1]
+  if script[1] =~ /^Main$/i
+    insert_index = i
+    break
   end
-end
-
-if deleted_count > 0
-  puts "🔄 Editores anteriores eliminados: #{deleted_count}"
 end
 
 # Insertar el nuevo editor
@@ -1089,6 +1073,7 @@ puts "✅¡INYECCIÓN COMPLETADA!"
 puts "=" * 70
 puts ""
 puts "🎮 CARACTERÍSTICAS:"
+puts "   • Adición de Pokémon Manual (Por #Pokédex o nombre)"
 puts "   • Edición manual de IVs (stat por stat)"
 puts "   • Edición manual de EVs (stat por stat)"
 puts "   • Edición manual de Felicidad (0-255)"
